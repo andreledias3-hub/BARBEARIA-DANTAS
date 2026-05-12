@@ -491,6 +491,7 @@
     </div>
     <div class="period-tabs">
       <div class="ptab active" onclick="setPeriod('day',this)">Hoje</div>
+      <div class="ptab" onclick="setPeriod('week',this)">Semana</div>
       <div class="ptab" onclick="setPeriod('month',this)">Mês</div>
       <div class="ptab" onclick="setPeriod('year',this)">Ano</div>
     </div>
@@ -805,6 +806,11 @@ function getFiltered() {
   return allRecords.filter(r => {
     const d = r.timestamp?.toDate ? r.timestamp.toDate() : new Date(r.timestamp);
     if (dashPeriod === 'day') return d.toISOString().slice(0,10) === now.toISOString().slice(0,10);
+    if (dashPeriod === 'week') {
+      const startOfWeek = new Date(now); startOfWeek.setDate(now.getDate() - now.getDay());
+      startOfWeek.setHours(0,0,0,0);
+      return d >= startOfWeek && d <= now;
+    }
     if (dashPeriod === 'month') return d.toISOString().slice(0,7) === now.toISOString().slice(0,7);
     return d.getFullYear() === now.getFullYear();
   });
@@ -884,7 +890,7 @@ function renderDashboard() {
       <div class="stat-card">
         <div class="stat-label">${dashPeriod==='day'?'Serviços':'Melhor dia'}</div>
         <div class="stat-value" style="font-size:${dashPeriod==='day'?'20':'15'}px">${dashPeriod==='day'?totalSvc:bestLabel}</div>
-        <div class="stat-sub">${dashPeriod==='day'?'realizados':(bestDay?bestDay[1]+' clientes':'')}</div>
+        <div class="stat-sub">${dashPeriod==='day'?'realizados':(bestDay?bestDay[1]+' cliente'+(bestDay[1]!==1?'s':''):'')}</div>
       </div>
     </div>
 
